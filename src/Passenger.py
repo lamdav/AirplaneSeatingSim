@@ -1,5 +1,5 @@
 class Passenger(object):
-  def __init__(self, aisle_movement_rate, seat_movement_rate, luggage_stowwing_rate, destination):
+    def __init__(self, aisle_movement_rate, seat_movement_rate, luggage_stowwing_rate, destination):
         self.aisle_movement_rate = aisle_movement_rate
         self.seat_movement_rate = seat_movement_rate
         self.luggage_stowwing_rate = luggage_stowwing_rate

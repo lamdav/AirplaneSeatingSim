@@ -8,6 +8,7 @@ AISLE_MOVEMENT_RATE = 1
 SEAT_MOVEMENT_RATE = 1
 LUGGAGE_STOWWING_RATE = 1
 
+# Not used. Generates all possible passengers.
 def generate_passengers(rows, seats):
     passengers = []
     for row in range(rows):
@@ -15,6 +16,20 @@ def generate_passengers(rows, seats):
             passengers.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
 
     return passengers
+
+def make_alternating_group(rows, start):
+    group = []
+    for row in range(rows):
+        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, start)))
+        start = -start
+    return group
+
+def generate_queue(rows, seats):
+    queue = []
+    for seat in range(seats, -1, -1):
+        queue.append(make_alternating_group(rows, seat))
+        queue.append(make_alternating_group(rows, -seat))
+    return queue
 
 def main():
     rows = 10
@@ -24,6 +39,8 @@ def main():
     plane = Airplane(rows)
 
     plane.load_passengers(passengers)
+
+    print(generate_queue(rows, seats)[1])
 
 
 if __name__ == '__main__':

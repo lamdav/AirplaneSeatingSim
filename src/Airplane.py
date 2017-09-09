@@ -1,7 +1,7 @@
 class Airplane(object):
     def __init__(self, rows):
         ROW_COMPONENT = [0, 0, 0, 'A', 0, 0, 0]
-        self.SEAT_SIZE = 3
+        self.SEAT_SIZE = 4
         self.plane = [ROW_COMPONENT for _ in range(self.SEAT_SIZE * rows)]
         self.passengers = []
 
@@ -20,5 +20,5 @@ class Airplane(object):
 
         return builder
 
-    def load_passengers(passengers):
+    def load_passengers(self, passengers):
         self.passengers = passengers
