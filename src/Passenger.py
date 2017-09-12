@@ -1,5 +1,5 @@
 import math
-from Airplane import Airplane
+from src.Airplane import Airplane
 
 class Passenger(object):
     def __init__(self, aisle_movement_rate, seat_movement_rate, luggage_stowwing_rate, destination):
@@ -38,7 +38,7 @@ class Passenger(object):
             else:
                 return (current_row, current_seat + (int(math.copysign(1, self.seat)) * self.seat_movement_rate))
         else:
-            new_row = current_row + self.aisle_movement_rate
+            new_row = round(current_row + self.aisle_movement_rate, 2) # Python will bug out with floats occasionally.
             if (new_row > target_row):
                 new_row = target_row
             return (new_row, current_seat)

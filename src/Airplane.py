@@ -26,13 +26,20 @@ class Airplane(object):
 
         return builder
 
-    def set_queue(self, queue):
-        self.queue = queue
-
     def queue_is_empty(self):
+        """
+            Returns True if the plane queue is empty.
+
+            :return: Boolean
+        """
         return len(self.queue) == 0
 
     def queue_get_next(self):
+        """
+            Returns the first Passenger of the queue.
+
+            :return: Passenger
+        """
         return self.queue.pop(0)
 
     def can_load_passenger(self):
@@ -40,34 +47,56 @@ class Airplane(object):
             Returns True if the Airplane can load a new passenger.
 
             This is done by checking if any passenger is in the first row.
+
+            :return: Boolean
         """
         for row in range(self.SEAT_SIZE):
             if (self.plane[row][self.AISLE] != self.AISLE_INDICATOR):
                 return False
         return True
 
-    def load_passenger(self, passengers):
-        self.plane[0][self.AISLE] = passengers
+    def load_passenger(self, passenger):
+        """
+            Loads a passenger in the front of the plane.
+
+            :param passengers: Passenger
+            :return: position of the loaded passenger (row, seat)
+        """
+        self.plane[0][self.AISLE] = passenger
         return (0, self.AISLE)
 
     def convert_internal_to_real_position(self, internal_row, internal_seat):
         """
-            Returns the Passenger (Real) coordinate position.
+            Returns the real position given an internal position.
 
-            :param internal_row:
-            :param internal_seat:
-            :return:
+            :param internal_row: Number
+            :param internal_seat: Number
+            :return: Real Coordinate (row, seat)
         """
         real_row = (internal_row + 1) / self.SEAT_SIZE
         real_seat = internal_seat - self.SEAT_PER_SIDE_PER_ROW
         return (real_row, real_seat)
 
     def convert_real_to_internal_position(self, real_row, real_seat):
+        """
+            Returns the internal position given a real position.
+
+            :param real_row:  Number
+            :param real_seat: Number
+            :return: Internal Coordinate (row, seat)
+        """
         internal_row = int(real_row * self.SEAT_SIZE - 1)
         internal_seat = real_seat + self.SEAT_PER_SIDE_PER_ROW
         return (internal_row, internal_seat)
 
     def move_passengers(self, loaded_passengers):
+        """
+            Moves all passengers in the load_passengers array.
+
+            :param loaded_passengers: List of Passengers that loaded and can move
+            :return: List of Passengers that are loaded but not at their assigned seating
+        """
+
         # Move the passenger farthest down the plane before moving others.
         # loaded_passengers is an array (Passenger, current_position)
         movable_loaded_passengers = []
@@ -96,6 +125,11 @@ class Airplane(object):
         return movable_loaded_passengers
 
     def step(self):
+        """
+            Steps through the model and yields it at each completed time iteration.
+
+            :return: yields (self, current time iteration)
+        """
         time_steps = 0
         while (not self.queue_is_empty()):
             passenger_line = self.queue_get_next()
