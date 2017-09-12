@@ -1,8 +1,8 @@
 import random
 random.seed(123)
 
-from Passenger import Passenger
-from Airplane import Airplane
+from src.Passenger import Passenger
+from src.Airplane import Airplane
 
 AISLE_MOVEMENT_RATE = 1
 SEAT_MOVEMENT_RATE = 1
@@ -26,7 +26,7 @@ def make_alternating_group(rows, start):
 
 def generate_queue(rows, seats):
     queue = []
-    for seat in range(seats, -1, -1):
+    for seat in range(seats, 0, -1):
         queue.append(make_alternating_group(rows, seat))
         queue.append(make_alternating_group(rows, -seat))
     return queue
@@ -35,12 +35,11 @@ def main():
     rows = 10
     seats = 3
 
-    passengers = generate_passengers(rows, seats)
+    passenger_queue = generate_queue(rows, seats)
     plane = Airplane(rows)
 
-    plane.load_passengers(passengers)
-
-    print(generate_queue(rows, seats)[1])
+    plane.set_queue(passenger_queue)
+    print(plane.step())
 
 
 if __name__ == '__main__':
