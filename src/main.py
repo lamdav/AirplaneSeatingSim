@@ -1,8 +1,9 @@
 import random
 random.seed(123)
 
-from src.Passenger import Passenger
-from src.Airplane import Airplane
+from Passenger import Passenger
+from Airplane import Airplane
+from Visualizer import *
 
 AISLE_MOVEMENT_RATE = 1
 SEAT_MOVEMENT_RATE = 1
@@ -32,7 +33,7 @@ def generate_queue(rows, seats):
     return queue
 
 def main():
-    rows = 10
+    rows = 3
     seats = 3
 
     passenger_queue = generate_queue(rows, seats)
@@ -40,8 +41,12 @@ def main():
 
     plane.set_queue(passenger_queue)
 
+    vis = Visualizer(plane)
+    vis.build()
+
     for step, time_steps in plane.step():
         print("Time Units take: {0}".format(time_steps))
+        vis.run()
         print(step)
 
 

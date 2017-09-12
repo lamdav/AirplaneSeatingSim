@@ -1,5 +1,5 @@
 import math
-from src.Airplane import Airplane
+from Airplane import Airplane
 
 class Passenger(object):
     def __init__(self, aisle_movement_rate, seat_movement_rate, luggage_stowwing_rate, destination):
