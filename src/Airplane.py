@@ -96,6 +96,7 @@ class Airplane(object):
         return movable_loaded_passengers
 
     def step(self):
+        time_steps = 0
         while (not self.queue_is_empty()):
             passenger_line = self.queue_get_next()
 
@@ -111,8 +112,11 @@ class Airplane(object):
 
                 # Move all passengers that are currently loaded.
                 loaded_passengers = self.move_passengers(loaded_passengers)
-                # yield self
+                time_steps += 1
+                yield (self, time_steps)
 
             while (len(loaded_passengers) != 0):
                 loaded_passengers = self.move_passengers(loaded_passengers)
-                # yield self
+                time_steps += 1
+                yield (self, time_steps)
+

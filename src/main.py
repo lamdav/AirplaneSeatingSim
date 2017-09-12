@@ -39,7 +39,10 @@ def main():
     plane = Airplane(rows)
 
     plane.set_queue(passenger_queue)
-    print(plane.step())
+
+    for step, time_steps in plane.step():
+        print("Time Units take: {0}".format(time_steps))
+        print(step)
 
 
 if __name__ == '__main__':
