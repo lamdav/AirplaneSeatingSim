@@ -1,6 +1,6 @@
 from src.Passenger import Passenger
 from src.Airplane import Airplane
-from src.Visualizer import Visualizer
+# from src.Visualizer import Visualizer
 
 AISLE_MOVEMENT_RATE = 0.8
 SEAT_MOVEMENT_RATE = 1
@@ -33,6 +33,8 @@ def generate_queue(rows, seats):
     for seat in range(seats, 0, -1):
         queue.append(make_alternating_group(rows, seat))
         queue.append(make_alternating_group(rows, -seat))
+
+    queue.reverse()
     return queue
 
 def main():
@@ -44,12 +46,12 @@ def main():
 
     plane.queue = passenger_queue
 
-    vis = Visualizer(plane)
-    vis.build()
+    # vis = Visualizer(plane)
+    # vis.build()
 
     for step, time_steps in plane.step():
         print("Time Units take: {0}".format(time_steps))
-        vis.run()
+        # vis.run()
         print(step)
 
 

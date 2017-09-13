@@ -40,7 +40,7 @@ class Airplane(object):
 
             :return: Passenger
         """
-        return self.queue.pop(0)
+        return self.queue.pop()
 
     def can_load_passenger(self):
         """
@@ -89,6 +89,37 @@ class Airplane(object):
         internal_seat = real_seat + self.SEAT_PER_SIDE_PER_ROW
         return (internal_row, internal_seat)
 
+    def is_conflict_in_path(self, old_position, new_position):
+        """
+            Returns True if there is another Passenger in the route from the old_position to the new_position.
+
+            :param old_position: Internal Position (row, seat)
+            :param new_position: Internal Position (row, seat)
+            :return: Boolean
+        """
+        internal_row, internal_seat = old_position
+        new_internal_row, new_internal_seat = new_position
+
+        if (internal_row == new_internal_row):
+            start, end = internal_seat, new_internal_seat
+            vary_by_row = False
+        else:
+            start, end = internal_row, new_internal_row
+            vary_by_row = True
+
+        if (start > end):
+            start, end = end, start
+
+        for k in range(start, end + 1):
+            if (vary_by_row):
+                position = self.plane[k][internal_seat]
+            else:
+                position = self.plane[internal_row][k]
+            if (position != self.EMPTY_SEAT and position != self.AISLE_INDICATOR):
+                return True
+
+        return False
+
     def move_passengers(self, loaded_passengers):
         """
             Moves all passengers in the load_passengers array.
@@ -96,12 +127,10 @@ class Airplane(object):
             :param loaded_passengers: List of Passengers that loaded and can move
             :return: List of Passengers that are loaded but not at their assigned seating
         """
-
         # Move the passenger farthest down the plane before moving others.
         # loaded_passengers is an array (Passenger, current_position)
         movable_loaded_passengers = []
-        for i in range(len(loaded_passengers)):
-            passenger_data = loaded_passengers[i]
+        for passenger_data in loaded_passengers:
             passenger, current_position = passenger_data
 
             internal_row, internal_seat = current_position
@@ -115,12 +144,15 @@ class Airplane(object):
                 self.plane[internal_row][internal_seat] = self.EMPTY_SEAT
 
             real_row, real_seat = passenger.move(real_row, real_seat)
+            new_internal_row, new_internal_seat = self.convert_real_to_internal_position(real_row, real_seat)
 
-            internal_row, internal_seat = self.convert_real_to_internal_position(real_row, real_seat)
+            # Check if there will be any hoping or landing on existing Passengers. If so, do not allow it.
+            if (self.is_conflict_in_path((internal_row, internal_seat), (new_internal_row, new_internal_seat))):
+                continue
 
-            self.plane[internal_row][internal_seat] = passenger
+            self.plane[new_internal_row][new_internal_seat] = passenger
             if (not passenger.is_at_assigned_seat(real_row, real_seat)):
-                movable_loaded_passengers.append((passenger, (internal_row, internal_seat)))
+                movable_loaded_passengers.append((passenger, (new_internal_row, new_internal_seat)))
 
         return movable_loaded_passengers
 
@@ -134,21 +166,21 @@ class Airplane(object):
         while (not self.queue_is_empty()):
             passenger_line = self.queue_get_next()
 
-            passenger_index = 0
             loaded_passengers = []
-            while (passenger_index < len(passenger_line)):
+            while (len(passenger_line) != 0):
                 # Check if the first row is empty.
                 # If so, load a passenger.
                 if (self.can_load_passenger()):
-                    loaded_position = self.load_passenger(passenger_line[passenger_index])
-                    loaded_passengers.append((passenger_line[passenger_index], loaded_position))
-                    passenger_index += 1
+                    passenger = passenger_line.pop()
+                    loaded_position = self.load_passenger(passenger)
+                    loaded_passengers.append((passenger, loaded_position))
 
                 # Move all passengers that are currently loaded.
                 loaded_passengers = self.move_passengers(loaded_passengers)
                 time_steps += 1
                 yield (self, time_steps)
 
+            # All loaded passenger for a given line must be seated before loading another group.
             while (len(loaded_passengers) != 0):
                 loaded_passengers = self.move_passengers(loaded_passengers)
                 time_steps += 1
