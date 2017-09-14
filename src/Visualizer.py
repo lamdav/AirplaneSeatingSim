@@ -23,7 +23,7 @@ class Visualizer(object):
         SeatWidth = 30
         AllSeat = []
 
-        for k in range(math.ceil(len(pl) / 5)):
+        for k in range(int(math.ceil(len(pl) / 5))):
             CurrentRow = pl[k]
             tempArr = []
             for j in range(len(CurrentRow)):
@@ -41,7 +41,7 @@ class Visualizer(object):
                     window.addItem(rec)
                     tempArr.append(rec)
             AllSeat.append(tempArr)
-            window.redraw
+            window.redraw()
         self.SEAT_ARRAY = AllSeat
         self.window = window
         window.redraw()
@@ -50,13 +50,12 @@ class Visualizer(object):
         window = self.window
         currentPlaneState = self.AirPlane.plane
         for obj in self.OBJECT_ARRAY:
-            print("undraw")
             obj.undraw()
 
         AllDrawn = []
         window.redraw()
 
-        for k in range(math.ceil(len(currentPlaneState))):
+        for k in range(int(math.ceil(len(currentPlaneState)))):
             SubRow = currentPlaneState[k]
             for j in range(len(SubRow)):
                 if (SubRow[j] != 0 and SubRow[j] != 'A'):
@@ -75,4 +74,4 @@ class Visualizer(object):
                     AllDrawn.append(cir)
         self.OBJECT_ARRAY = AllDrawn
         window.redraw()
-        time.sleep(1)
+        time.sleep(0.5)
