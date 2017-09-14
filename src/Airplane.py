@@ -1,3 +1,5 @@
+import math
+
 class Airplane(object):
     SEAT_ENTRANCE_OFFSET = 0.6
 
@@ -89,6 +91,9 @@ class Airplane(object):
         internal_seat = real_seat + self.SEAT_PER_SIDE_PER_ROW
         return (internal_row, internal_seat)
 
+    def is_passenger(self, obj):
+        return obj != self.AISLE_INDICATOR and obj != self.EMPTY_SEAT
+
     def is_conflict_in_path(self, old_position, new_position):
         """
             Returns True if there is another Passenger in the route from the old_position to the new_position.
@@ -115,7 +120,27 @@ class Airplane(object):
                 position = self.plane[k][internal_seat]
             else:
                 position = self.plane[internal_row][k]
-            if (position != self.EMPTY_SEAT and position != self.AISLE_INDICATOR):
+            if (self.is_passenger(position)):
+                return True
+
+        return False
+
+    def is_conflict_with_row(self, real_row, real_seat):
+        """
+            Returns True if the another Passenger is in the provided real_row.
+
+            :param real_row: Number
+            :return: Boolean
+        """
+        if (real_seat != 0):
+            return False
+
+        internal_row, _ = self.convert_real_to_internal_position(real_row, 0) # We don't care about the real_row
+        start = internal_row - 2
+        end = internal_row + 2
+
+        for r in range(start, end + 1):
+            if (self.is_passenger(self.plane[r][self.AISLE])):
                 return True
 
         return False
@@ -143,15 +168,17 @@ class Airplane(object):
             else:
                 self.plane[internal_row][internal_seat] = self.EMPTY_SEAT
 
-            real_row, real_seat = passenger.move(real_row, real_seat)
-            new_internal_row, new_internal_seat = self.convert_real_to_internal_position(real_row, real_seat)
+            new_real_row, new_real_seat = passenger.move(real_row, real_seat)
+            new_internal_row, new_internal_seat = self.convert_real_to_internal_position(new_real_row, new_real_seat)
 
             # Check if there will be any hoping or landing on existing Passengers. If so, do not allow it.
-            if (self.is_conflict_in_path((internal_row, internal_seat), (new_internal_row, new_internal_seat))):
+            if (self.is_conflict_with_row(math.floor(new_real_row) + self.SEAT_ENTRANCE_OFFSET, new_real_seat) or self.is_conflict_in_path((internal_row, internal_seat), (new_internal_row, new_internal_seat))):
+                self.plane[internal_row][internal_seat] = passenger
+                movable_loaded_passengers.append((passenger, (internal_row, internal_seat)))
                 continue
 
             self.plane[new_internal_row][new_internal_seat] = passenger
-            if (not passenger.is_at_assigned_seat(real_row, real_seat)):
+            if (not passenger.is_at_assigned_seat(new_real_row, new_real_seat)):
                 movable_loaded_passengers.append((passenger, (new_internal_row, new_internal_seat)))
 
         return movable_loaded_passengers

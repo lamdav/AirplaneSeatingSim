@@ -1,12 +1,13 @@
 from src.Passenger import Passenger
 from src.Airplane import Airplane
+from random import shuffle
 # from src.Visualizer import Visualizer
 
-AISLE_MOVEMENT_RATE = 0.8
+AISLE_MOVEMENT_RATE = 1
 SEAT_MOVEMENT_RATE = 1
 LUGGAGE_STOWWING_RATE = 1
 
-def make_alternating_group(rows, start):
+def make_alternating_group(rows, seat):
     """
         Returns a list of alternating Passengers.
 
@@ -16,8 +17,8 @@ def make_alternating_group(rows, start):
     """
     group = []
     for row in range(rows):
-        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, start)))
-        start = -start
+        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
+        seat = -seat
     return group
 
 def generate_queue(rows, seats):
@@ -37,11 +38,26 @@ def generate_queue(rows, seats):
     queue.reverse()
     return queue
 
+def generate_zone(row, seats):
+    group = []
+    for seat in range(-1, -seats - 1, -1):
+        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
+    for seat in range(1, seats + 1):
+        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
+    return group
+
+def generate_zone_queue(rows, seats):
+    queue = []
+    for r in range(rows):
+        queue.append(generate_zone(r, seats))
+    return queue
+
 def main():
     rows = 50
     seats = 3
 
-    passenger_queue = generate_queue(rows, seats)
+    # passenger_queue = generate_queue(rows, seats)
+    passenger_queue = generate_zone_queue(rows, seats)
     plane = Airplane(rows)
 
     plane.queue = passenger_queue
