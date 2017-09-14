@@ -1,7 +1,11 @@
-from src.Passenger import Passenger
+import sys
+import os.path
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from src.Airplane import Airplane
-from random import shuffle
-# from src.Visualizer import Visualizer
+from src.Passenger import Passenger
+from src.Visualizer import Visualizer
 
 AISLE_MOVEMENT_RATE = 1
 SEAT_MOVEMENT_RATE = 1
@@ -62,12 +66,12 @@ def main():
 
     plane.queue = passenger_queue
 
-    # vis = Visualizer(plane)
-    # vis.build()
+    vis = Visualizer(plane)
+    vis.build()
 
     for step, time_steps in plane.step():
         print("Time Units take: {0}".format(time_steps))
-        # vis.run()
+        vis.run()
         print(step)
 
 

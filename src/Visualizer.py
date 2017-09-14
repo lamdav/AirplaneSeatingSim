@@ -1,4 +1,4 @@
-from graphics import *
+from src.graphics import *
 import math
 import time
 
