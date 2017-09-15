@@ -1,79 +1,30 @@
 import sys
 import os.path
+import argparse
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.Airplane import Airplane
-from src.Passenger import Passenger
-from src.Visualizer import Visualizer
-
-AISLE_MOVEMENT_RATE = 1
-SEAT_MOVEMENT_RATE = 1
-LUGGAGE_STOWWING_RATE = 1
-
-def make_alternating_group(rows, seat):
-    """
-        Returns a list of alternating Passengers.
-
-        :param rows: Positive Integer of rows
-        :param seats: Positive Integer of seats on each side of a row
-        :return: List of Passengers
-    """
-    group = []
-    for row in range(rows):
-        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
-        seat = -seat
-    return group
-
-def generate_queue(rows, seats):
-    """
-        Create the list of list of Passengers (queue) where each inner list are Passenegers seated
-        in alternating rows.
-
-        :param rows: Positive Integer of rows
-        :param seats: Positive Integer of seats on each side of a row
-        :return: List of list of Passengers
-    """
-    queue = []
-    for seat in range(seats, 0, -1):
-        queue.append(make_alternating_group(rows, seat))
-        queue.append(make_alternating_group(rows, -seat))
-
-    queue.reverse()
-    return queue
-
-def generate_zone(row, seats):
-    group = []
-    for seat in range(-1, -seats - 1, -1):
-        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
-    for seat in range(1, seats + 1):
-        group.append(Passenger(AISLE_MOVEMENT_RATE, SEAT_MOVEMENT_RATE, LUGGAGE_STOWWING_RATE, (row, seat)))
-    return group
-
-def generate_zone_queue(rows, seats):
-    queue = []
-    for r in range(rows):
-        queue.append(generate_zone(r, seats))
-    return queue
+from src.ZigModel import ZigModel
+from src.ZoneModel import ZoneModel
+from src.ModelRunner import ModelRunner
 
 def main():
-    rows = 50
-    seats = 3
+    parser = argparse.ArgumentParser(description="Simulate Plane Boarding")
 
-    # passenger_queue = generate_queue(rows, seats)
-    passenger_queue = generate_zone_queue(rows, seats)
-    plane = Airplane(rows)
+    parser.add_argument("--rows", "-r", help="Number of rows on the plane", default=3, nargs=1, type=int)
+    parser.add_argument("--seats", "-s", help="Number of seats on each side of the aisle of the plane", default=3, nargs=1, type=int)
+    parser.add_argument("--visualize", "-v", help="Display Visualizer", default=False, action="store_true")
+    parser.add_argument("--model", "-m", help="Model to use", default="zig", choices=["zig", "zone"], type=str)
 
-    plane.queue = passenger_queue
+    args = parser.parse_args()
 
-    vis = Visualizer(plane)
-    vis.build()
+    if (args.model == "zip"):
+        model = ZigModel()
+    else:
+        model = ZoneModel()
 
-    for step, time_steps in plane.step():
-        print("Time Units take: {0}".format(time_steps))
-        vis.run()
-        print(step)
-
+    runner = ModelRunner()
+    runner.run(model, args.rows, args.seats, args.visualize)
 
 if __name__ == '__main__':
     main()

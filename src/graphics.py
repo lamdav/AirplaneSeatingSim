@@ -268,7 +268,8 @@ class GraphWin(tk.Canvas):
     def close(self):
         """Close the window"""
 
-        if self.closed: return
+        if self.closed:
+            return
         self.closed = True
         self.master.destroy()
         self.__autoflush()
@@ -394,6 +395,10 @@ class GraphWin(tk.Canvas):
             item.undraw()
             item.draw(self)
         self.update()
+
+    def close_on_mouse_click(self):
+        self.bind("<Button-1>", lambda event: self.close())
+        _root.mainloop()
 
 
 class Transform:
@@ -632,7 +637,6 @@ class Oval(_BBox):
         x2, y2 = canvas.toScreen(p2.x, p2.y)
         return canvas.create_oval(x1, y1, x2, y2, options)
 
-
 class Circle(Oval):
     def __init__(self, center, radius):
         p1 = Point(center.x - radius, center.y - radius)
@@ -651,6 +655,9 @@ class Circle(Oval):
     def getRadius(self):
         return self.radius
 
+    def setCenter(self, center):
+        self.p1 = Point(center.x - self.radius, center.y - self.radius)
+        self.p2 = Point(center.x + self.radius, center.y + self.radius)
 
 class Line(_BBox):
     def __init__(self, p1, p2):
