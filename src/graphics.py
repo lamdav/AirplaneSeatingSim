@@ -160,7 +160,8 @@ __version__ = "5.0"
 #     Added ability to set text atttributes.
 #     Added Entry boxes.
 
-import time, os, sys
+import os
+import time
 
 try:  # import as appropriate for 2.x vs. 3.x
     import tkinter as tk
@@ -637,6 +638,7 @@ class Oval(_BBox):
         x2, y2 = canvas.toScreen(p2.x, p2.y)
         return canvas.create_oval(x1, y1, x2, y2, options)
 
+
 class Circle(Oval):
     def __init__(self, center, radius):
         p1 = Point(center.x - radius, center.y - radius)
@@ -658,6 +660,7 @@ class Circle(Oval):
     def setCenter(self, center):
         self.p1 = Point(center.x - self.radius, center.y - self.radius)
         self.p2 = Point(center.x + self.radius, center.y + self.radius)
+
 
 class Line(_BBox):
     def __init__(self, p1, p2):
@@ -999,7 +1002,7 @@ def test():
 
 
 # MacOS fix 2
-tk.Toplevel(_root).destroy()
+# tk.Toplevel(_root).destroy()
 
 # MacOS fix 1
 update()

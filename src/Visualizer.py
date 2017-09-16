@@ -1,9 +1,8 @@
 import math
-import time
-
 from tkinter import *
 
 from src.graphics import *
+
 
 class Visualizer(object):
     def __init__(self, plane):
@@ -27,6 +26,12 @@ class Visualizer(object):
         self.PASSENGER_COLORS = ["red", "blue"]
 
     def draw_plane(self, plane_state):
+        """
+            Draws the underlying plane.
+
+            :param plane_state: List of List
+            :return: None
+        """
         INITIAL_POSITION = 50
         x = INITIAL_POSITION
         y = INITIAL_POSITION
@@ -54,11 +59,22 @@ class Visualizer(object):
         self.window.redraw()
 
     def undraw_passengers(self):
+        """
+            Undraws all passengers and sets the passengers list to empty.
+
+            :return: None
+        """
         for passenger in self.passengers:
             passenger.undraw()
         self.passengers = []
 
     def draw_state(self, plane_state):
+        """
+            Draws the current state of the given plane_state onto the window.
+
+            :param plane_state: List of List
+            :return: None
+        """
         # Remove all moving passengers.
         self.undraw_passengers()
 
@@ -87,12 +103,23 @@ class Visualizer(object):
                     else:
                         self.passengers.append(passenger_item)
 
-
-
     def update_time_step(self, time_step):
+        """
+            Updates the Time_Step Label.
+
+            :param time_step:  Number
+            :return: None
+        """
         self.label.setText("Time Step: {0}".format(time_step))
 
     def run(self):
+        """
+            Executes the visualizer and shows each step.
+
+            Note: this is much slower on OSX than on Windows or Linux.
+
+            :return: None
+        """
         self.draw_plane(self.airplane.plane)
         for plane_state, time_step in self.airplane.step():
             self.draw_state(plane_state.plane)

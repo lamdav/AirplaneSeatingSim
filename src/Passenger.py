@@ -16,22 +16,13 @@ class Passenger(object):
     def __repr__(self):
         return "Passenger seated @ ({0}, {1})".format(self.row, self.seat)
 
-    def normalize_position(self, position):
-        """
-            Return the normalize position so that it is center on the plane's aisle index (3).
-        """
-        PLANE_AISLE_INDEX = 3
-
-        row, seat = position
-        seat += PLANE_AISLE_INDEX
-        return (row, seat)
-
-    def compute_time(self, row, seat):
-        return self.aisle_movement_rate * self.row + self.seat_movement_rate * abs(self.seat + self.luggage_stowwing_rate)
-
     def move(self, current_row, current_seat):
         """
             Returns the (row, seat) coordinate the Passenger is in.
+
+            :param current_row: Number
+            :param current_seat: Number
+            :return: (new_row, new_number)
         """
         target_row = self.row + Airplane.SEAT_ENTRANCE_OFFSET
         if (current_row == target_row):
@@ -40,11 +31,18 @@ class Passenger(object):
             else:
                 return (current_row, current_seat + (int(math.copysign(1, self.seat)) * self.seat_movement_rate))
         else:
-            new_row = round(current_row + self.aisle_movement_rate, 2) # Python will bug out with floats occasionally.
+            new_row = round(current_row + self.aisle_movement_rate, 2)  # Python will bug out with floats occasionally.
             if (new_row > target_row):
                 new_row = target_row
             return (new_row, current_seat)
 
     def is_at_assigned_seat(self, real_row, real_seat):
+        """
+            Returns True if the given row and seat are the assigned seating.
+
+            :param real_row: Number
+            :param real_seat: Number
+            :return: Boolean
+        """
         target_row = self.row + Airplane.SEAT_ENTRANCE_OFFSET
         return (real_row == target_row and real_seat == self.seat)
